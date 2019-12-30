@@ -74,6 +74,8 @@ Bot.on('message', chatter => {
         case 'meg':
 
             if ( chatter.username == 'tehblister' ) {
+                activeMeg = true;
+                megHealth = 1000;
                 Bot.say('A wild Meg appears! Kill it with cannons! [!fire]');
             }
 
