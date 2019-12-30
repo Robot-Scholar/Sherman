@@ -114,10 +114,7 @@ Bot.on('message', chatter => {
 
 				}, 1000 * random(120, 360));
 
-				setTimeout(function() {
-					Bot.say('The Meg is charging!');
-					shipHoles = shipHoles + 1;
-				}, 1000 * random(10, 40));
+				setTimeout(chargeMeg, 1000 * random(10, 40));
 			}
 
 		break;
@@ -126,7 +123,17 @@ Bot.on('message', chatter => {
 
 });
 
+function chargeMeg() {
+	Bot.say('The Meg is charging!');
+	shipHoles = shipHoles + 1;
+
+	console.log('Damage Check... ' + shipHoles + ':' + shipWater);
+
+	setTimeout(chargeMeg, 1000 * random(10, 40));
+}
+
 function checkDamage() {
+	
 	// damage check
 	if ( shipHoles > 1 ) {
 		shipWater = shipWater + shipHoles;
@@ -140,6 +147,8 @@ function checkDamage() {
 		shipHoles = 0;
 	}
 	
+	console.log('Damage Check... ' + shipHoles + ':' + shipWater);
+
 	setTimeout(checkDamage, 1000);
 }
 
