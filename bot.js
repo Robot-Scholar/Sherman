@@ -98,6 +98,10 @@ Bot.on('message', chatter => {
 		
 		break;
 
+		case 'milk':
+			Bot.say('What does the milk command even do?');
+		break;
+
 		case 'meg':
 
 			if ( chatter.username == 'tehblister' ) {
@@ -124,12 +128,14 @@ Bot.on('message', chatter => {
 });
 
 function chargeMeg() {
-	Bot.say('The Meg is charging!');
-	shipHoles = shipHoles + 1;
-
-	console.log('Damage Check... ' + shipHoles + ':' + shipWater);
-
-	setTimeout(chargeMeg, 1000 * random(10, 40));
+	if ( activeMeg ) {
+		Bot.say('The Meg is charging!');
+		shipHoles = shipHoles + 1;
+	
+		console.log('Damage Check... ' + shipHoles + ':' + shipWater);
+	
+		setTimeout(chargeMeg, 1000 * random(10, 40));
+	}
 }
 
 function checkDamage() {
@@ -149,7 +155,10 @@ function checkDamage() {
 	
 	console.log('Damage Check... ' + shipHoles + ':' + shipWater);
 
-	setTimeout(checkDamage, 1000);
+	if ( activeMeg ) {
+		setTimeout(checkDamage, 10000);
+	}
+	
 }
 
 setTimeout(checkDamage, 1000);
