@@ -39,7 +39,7 @@ client.on('chat', (channel, userstate, message, self) => {
     switch (cmd) {
 
         case 'test': 
-            client.say('channel', `@${userstate.username} - Sherman is sailing...`);
+            client.say('MegMegalodon', `@${userstate.username} - Sherman is sailing...`);
         break;
 
         case 'fire':
@@ -48,10 +48,10 @@ client.on('chat', (channel, userstate, message, self) => {
                 let damage = random(0,200);
                 megHealth = megHealth - damage;
 
-                client.say('channel', `@${userstate.username} shot at the Meg and did ${damage} damage.`);
+                client.say('MegMegalodon', `@${userstate.username} shot at the Meg and did ${damage} damage.`);
 
                 if ( megHealth < 0 ) {
-                    client.say('The Meg has been slain! Collect your rewards!');
+                    client.say('MegMegalodon', 'The Meg has been slain! Collect your rewards!');
                     megHealth = 1000;
                     activeMeg = false;
                 }
@@ -62,7 +62,7 @@ client.on('chat', (channel, userstate, message, self) => {
         case 'meg':
 
             if ( userstate.username == 'tehblister' ) {
-                client.say('channel', 'A wild Meg appears! Kill it with cannons! [!fire]');
+                client.say('MegMegalodon', 'A wild Meg appears! Kill it with cannons! [!fire]');
             }
 
         break;
