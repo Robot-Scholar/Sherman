@@ -42,7 +42,7 @@ let shipWater = 0;
 
 Bot.on('message', chatter => {
 
-	console.log(`#${chatter.channel} ${chatter.username}: ${chatter.message}`);
+	console.log(`${chatter.channel} ${chatter.username}: ${chatter.message}`);
 
 	if ( ! chatter.message.startsWith(prefix) || chatter.username == 'shermanthebot' ) {
 		return;
