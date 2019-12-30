@@ -126,7 +126,7 @@ Bot.on('message', chatter => {
 
 });
 
-setTimeout(function() {
+function checkDamage() {
 	// damage check
 	if ( shipHoles > 1 ) {
 		shipWater = shipWater + shipHoles;
@@ -139,6 +139,10 @@ setTimeout(function() {
 		shipWater = 0;
 		shipHoles = 0;
 	}
-}, 1000);
+	
+	setTimeout(checkDamage, 1000);
+}
+
+setTimeout(checkDamage, 1000);
 
 
