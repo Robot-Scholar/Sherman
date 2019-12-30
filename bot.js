@@ -37,7 +37,7 @@ function random(low, high) {
     return Math.floor(Math.random() * (high - low) + low);
 }
 
-bot.on('message', chatter => {
+Bot.on('message', chatter => {
 
     console.log(`#${chatter.channel} ${chatter.username}: ${chatter.message}`);
 
