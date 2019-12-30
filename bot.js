@@ -102,7 +102,7 @@ Bot.on('message', chatter => {
 
 			if ( chatter.username == 'tehblister' ) {
 				activeMeg = true;
-				megHealth = random(500, 1000);
+				megHealth = random(500, 2500);
 				Bot.say('A wild Meg appears! Kill it with cannons! [!fire]');
 
 				setTimeout(function() { 
