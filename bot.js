@@ -128,6 +128,22 @@ Bot.on('message', chatter => {
 			}
 		break;
 
+		case 'repairs':
+			if ( Players[ chatter.username ]['repairs'] == 0 ) {
+				Bot.say(`You've never fixed the ship, @${chatter.username}. It's almost like you WANT us to sink. :(`);
+			} else {
+				Bot.say(`You've repaired our ship ${Players[ chatter.username ]['repairs']} times. You're a true seaman!', @${chatter.username}`);
+			}
+		break;
+
+		case 'bails':
+			if ( Players[ chatter.username ]['bails'] == 0 ) {
+				Bot.say(`You've never bailed water, @${chatter.username}. Do you think you're too important? :(`);
+			} else {
+				Bot.say(`You've bailed ${Players[ chatter.username ]['bails']} gallons! Water belongs outside the ship!', @${chatter.username}`);
+			}
+		break;
+
 		case 'bail':
 			if ( shipWater == 0 ) {
 				Bot.say(`${chatter.username} flails his bucket around at the air. What a doofus!`);
