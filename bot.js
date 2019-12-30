@@ -48,10 +48,6 @@ Bot.on('message', chatter => {
 
 	console.log(`${chatter.channel} ${chatter.username}: ${chatter.message}`);
 
-	if ( ! chatter.message.startsWith(prefix) || chatter.username == 'shermanthebot' ) {
-		return;
-	}
-
 	if ( chatter.username in Players ) {
 		Players[ chatter.username ]['doubloons']++;
 	} else {
@@ -63,6 +59,10 @@ Bot.on('message', chatter => {
 			repairs: 0,
 			bails: 0
 		};
+	}
+
+	if ( ! chatter.message.startsWith(prefix) || chatter.username == 'shermanthebot' ) {
+		return;
 	}
 
 	const args = chatter.message.slice(prefix.length).split(/ +/);
