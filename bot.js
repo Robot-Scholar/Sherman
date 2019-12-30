@@ -135,7 +135,7 @@ function chargeMeg() {
 function checkDamage() {
 	
 	// damage check
-	if ( shipHoles > 1 ) {
+	if ( shipHoles > 0 ) {
 		shipWater = shipWater + shipHoles;
 
 		Bot.say('You are sinking! !repair and !bail');
