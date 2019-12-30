@@ -2,17 +2,17 @@
 require('dotenv').config();
 
 const options = {
-    options: {
-        debug: true
-    },
-    connection: {
-        reconnect: true
-    },
-    identity: {
-        username: process.env.USERNAME,
-        password: process.env.OAUTH
-    },
-    channels: ['MegMegalodon']
+	options: {
+		debug: true
+	},
+	connection: {
+		reconnect: true
+	},
+	identity: {
+		username: process.env.USERNAME,
+		password: process.env.OAUTH
+	},
+	channels: ['MegMegalodon']
 };
 
 const prefix = '!';
@@ -25,62 +25,120 @@ const prefix = '!';
 const TwitchBot = require('twitch-bot');
 
 const Bot = new TwitchBot({
-    username: process.env.USERNAME,
-    oauth: process.env.OAUTH,
-    channels: ['MegMegalodon']
+	username: process.env.USERNAME,
+	oauth: process.env.OAUTH,
+	channels: ['MegMegalodon']
 });
 
 let activeMeg = false;
 let megHealth = 1000;
 
 function random(low, high) {
-    return Math.floor(Math.random() * (high - low) + low);
+	return Math.floor(Math.random() * (high - low) + low);
 }
+
+let shipHoles = 0;
+let shipWater = 0;
 
 Bot.on('message', chatter => {
 
-    console.log(`#${chatter.channel} ${chatter.username}: ${chatter.message}`);
+	console.log(`#${chatter.channel} ${chatter.username}: ${chatter.message}`);
 
-    if ( ! chatter.message.startsWith(prefix) || chatter.username == 'shermanthebot' ) {
-        return;
-    }
+	if ( ! chatter.message.startsWith(prefix) || chatter.username == 'shermanthebot' ) {
+		return;
+	}
 
-    const args = chatter.message.slice(prefix.length).split(/ +/);
-    const cmd  = args.shift().toLowerCase();
+	const args = chatter.message.slice(prefix.length).split(/ +/);
+	const cmd  = args.shift().toLowerCase();
 
-    switch (cmd) {
+	switch (cmd) {
 
-        case 'test': 
-            Bot.say(`@${chatter.username} - Sherman is sailing...`);
-        break;
+		case 'test': 
+			Bot.say(`@${chatter.username} - Sherman is sailing...`);
+		break;
 
-        case 'fire':
+		case 'fire':
 
-            if ( activeMeg ) {
-                let damage = random(0,200);
-                megHealth = megHealth - damage;
+			if ( activeMeg ) {
+				let damage = random(0,400);
+				megHealth = megHealth - damage;
 
-                Bot.say(`@${chatter.username} shot at the Meg and did ${damage} damage.`);
+				Bot.say(`@${chatter.username} shot at the Meg and did ${damage} damage.`);
 
-                if ( megHealth < 0 ) {
-                    Bot.say('The Meg has been slain! Collect your rewards!');
-                    megHealth = 1000;
-                    activeMeg = false;
-                }
-            }
+				if ( megHealth < 0 ) {
+					Bot.say('The Meg has been slain! Collect your rewards!');
+					megHealth = 1000;
+					activeMeg = false;
+				}
+			}
 
-        break;
+		break;
 
-        case 'meg':
+		case 'bail':
+			if ( shipWater == 0 ) {
+				Bot.say(`${chatter.username} flails his bucket around at the air. What a doofus!`);
+				return;
+			}
+			if ( shipWater > 0 ) {
+				shipWater = shipWater - 1;
+				Bot.say(`${chatter.username} vigorously bails water...`);
+				return;
+			}
+		break;
 
-            if ( chatter.username == 'tehblister' ) {
-                activeMeg = true;
-                megHealth = 1000;
-                Bot.say('A wild Meg appears! Kill it with cannons! [!fire]');
-            }
+		case 'repair':
+			if ( shipHoles == 0 ) {
+				Bot.say(`${chatter.username} should not be allowed to play with wood...`)
+			}
+			if ( shipHoles > 0 ) {
+				shipHoles = shipHoles - 1;
+				Bot.say('The sound of hammering below decks is reassuring.');
+				return;
+			}
+		
+		break;
 
-        break;
+		case 'meg':
 
-    }
+			if ( chatter.username == 'tehblister' ) {
+				activeMeg = true;
+				megHealth = random(500, 1000);
+				Bot.say('A wild Meg appears! Kill it with cannons! [!fire]');
+
+				setTimeout(function() { 
+
+					if ( activeMeg ) {
+						Bot.say('You did not kill the Meg in time and she ran away. You gain NOTHING!');
+						activeMeg = false;
+					}
+
+				}, 1000 * random(120, 360));
+
+				setTimeout(function() {
+					Bot.say('The Meg is charging!');
+					shipHoles = shipHoles + 1;
+				}, 1000 * random(10, 40));
+			}
+
+		break;
+
+	}
 
 });
+
+setTimeout(function() {
+	// damage check
+	if ( shipHoles > 1 ) {
+		shipWater = shipWater + shipHoles;
+
+		Bot.say('You are sinking! !repair and !bail');
+	}
+
+	if ( shipWater >= 15 ) {
+		Bot.say('Your ship sank! Everyone loses all their treasure. megmeg2Rip');
+		shipWater = 0;
+		shipHoles = 0;
+	}
+}, 1000);
+
+
