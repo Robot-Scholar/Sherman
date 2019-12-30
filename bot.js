@@ -24,7 +24,7 @@ const prefix = '!';
 
 const TwitchBot = require('twitch-bot');
 
-const bot = new TwitchBot({
+const Bot = new TwitchBot({
     username: process.env.USERNAME,
     oauth: process.env.OAUTH,
     channels: ['MegMegalodon']
