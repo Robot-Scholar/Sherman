@@ -102,7 +102,7 @@ Bot.on('message', chatter => {
 				if ( krakenHealth < 0 ) {
 					Bot.say('The Kraken has been slain and sinks beneath the waves! Collect your rewards!');
 					krakenHealth = 1000;
-					krakenMeg = false;
+					activeKraken = false;
 
 					Players[ chatter.username ]['doubloons'] += 5000;
 					Players[ chatter.username ]['kills'] += 1;
@@ -116,7 +116,7 @@ Bot.on('message', chatter => {
 			if ( Players[ chatter.username ]['megs'] == 0 ) {
 				Bot.say(`You haven't killed any Megalodons, @${chatter.username}`);
 			} else {
-				Bot.say(`You've murdered ${Players[ chatter.username ]['megs']} Megalodons', @${chatter.username}`);
+				Bot.say(`You've murdered ${Players[ chatter.username ]['megs']} Megalodons, @${chatter.username}`);
 			}
 		break;
 
