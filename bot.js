@@ -195,7 +195,7 @@ client.on('message', (channel,tags,message,self) => {
 				return;
 			}
 			if ( shipWater > 0 ) {
-				Players[ tags.username ]['doubloons'] += 25;
+				Players[ tags.username ]['doubloons'] += 100;
 				shipWater = shipWater - 1;
 				client.say(channel, `${tags.username} vigorously bails water...`);
 
@@ -211,7 +211,7 @@ client.on('message', (channel,tags,message,self) => {
 			}
 			if ( shipHoles > 0 ) {
 				Players[ tags.username ]['repairs'] += 1;
-				Players[ tags.username ]['doubloons'] += 50;
+				Players[ tags.username ]['doubloons'] += 100;
 				shipHoles = shipHoles - 1;
 				client.say(channel, 'The sound of hammering below decks is reassuring.');
 				return;
