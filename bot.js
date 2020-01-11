@@ -112,9 +112,11 @@ client.on('message', (channel,tags,message,self) => {
 		break;
 
 		case 'say':
-			let msg_out = message.slice(prefix.length).split(/ +/);
-			msg_out.shift();
-			client.say('#megmegalodon', msg_out.join(' '));
+			if ( tags.username == 'tehblister' || tags.username == 'megmegalodon' ) {
+				let msg_out = message.slice(prefix.length).split(/ +/);
+				msg_out.shift();
+				client.say('#megmegalodon', msg_out.join(' '));
+			}
 		break;
 
 		case 'fire':
