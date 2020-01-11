@@ -262,7 +262,6 @@ Bot.on('message', chatter => {
 					Players[ nick ].doubloons = 0;
 				}
 
-				let query = ``
 			}
 		break;
 
