@@ -111,6 +111,11 @@ client.on('message', (channel,tags,message,self) => {
 			client.say(channel, `@${tags.username} - Sherman is sailing...`);
 		break;
 
+		case 'say':
+			let msg_out = message.slice(prefix.length).split(/ +/).splice(0,1).join(' ');
+			client.say('#megmegalodon', msg_out);
+		break;
+
 		case 'fire':
 
 			if ( activeMeg ) {
