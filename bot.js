@@ -213,9 +213,9 @@ Bot.on('message', chatter => {
 
 		case 'treasure':
 
-			let query = 'SELECT sum(treasure) as banked FROM bank WHERE nick = ?';
+			let treasure_query = 'SELECT sum(treasure) as banked FROM bank WHERE nick = ?';
 			connection.query(
-				query, [ chatter.username ],
+				treasure_query, [ chatter.username ],
 				function(err, results, fields) {
 					if ( err ) {
 						console.log(`ERROR: ${err}`);
