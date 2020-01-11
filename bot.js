@@ -102,10 +102,6 @@ client.on('message', (channel,tags,message,self) => {
 		};
 	}
 
-	if ( ! message.startsWith(prefix) || username == 'shermanthebot' ) {
-		return;
-	}
-
 	const args = message.slice(prefix.length).split(/ +/);
 	const cmd  = args.shift().toLowerCase();
 
