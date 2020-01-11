@@ -4,7 +4,7 @@ CREATE TABLE `bank` (
     `ts` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `treasure` INT NOT NULL DEFAULT 0,
     PRIMARY KEY(`id`),
-    INDEX `user_idx` (`user_id`)
+    INDEX `user_idx` (`nick`)
 ) ENGINE=InnoDB Default CHARSET=utf8mb4;
 
 CREATE TABLE `users` (

@@ -42,7 +42,7 @@ var createConnection = function() {
 	});
 
 	connection.on('error', function(err) {
-		console.log('DB Error': err);
+		console.log('DB Error', err);
 		if ( err.code == 'PROTOCOL_CONNECTION_LOST' ) {
 			createConnection();
 		} else {
