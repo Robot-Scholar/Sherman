@@ -112,8 +112,9 @@ client.on('message', (channel,tags,message,self) => {
 		break;
 
 		case 'say':
-			let msg_out = message.slice(prefix.length).split(/ +/).splice(0,1).join(' ');
-			client.say('#megmegalodon', msg_out);
+			let msg_out = message.slice(prefix.length).split(/ +/);
+			msg_out.shift();
+			client.say('#megmegalodon', msg_out.join(' '));
 		break;
 
 		case 'fire':
