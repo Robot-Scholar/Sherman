@@ -54,19 +54,19 @@ var createConnection = function() {
 
 createConnection();
 
-//const tmi = require('tmi.js');
+const tmi = require('tmi.js');
 
-//const client = new tmi.client(options);
-//client.connect();
+const client = new tmi.client(options);
+client.connect();
 
-const TwitchBot = require('twitch-bot');
-
+//const TwitchBot = require('twitch-bot');
+/*
 const Bot = new TwitchBot({
 	username: process.env.USERNAME,
 	oauth: process.env.OAUTH,
 	channels: ['MegMegalodon']
 });
-
+*/
 let activeMeg = false;
 let activeKraken = false;
 let megHealth = 1000;
@@ -81,14 +81,18 @@ let shipWater = 0;
 
 let Players = {};
 
-Bot.on('message', chatter => {
+client.on('message', (channel,tags,message,self) => {
 
-	console.log(`${chatter.channel} ${chatter.username}: ${chatter.message}`);
+	//console.log(`${chatter.channel} ${chatter.username}: ${chatter.message}`);
 
-	if ( chatter.username in Players ) {
-		Players[ chatter.username ]['doubloons']++;
+	if ( self ) { // message from client for tmi.js?
+		return;
+	}
+
+	if ( tags.username in Players ) {
+		Players[ tags.username ]['doubloons']++;
 	} else {
-		Players[ chatter.username ] = {
+		Players[ tags.username ] = {
 			doubloons: 1,
 			megs: 0,
 			kraken: 0,
@@ -98,17 +102,17 @@ Bot.on('message', chatter => {
 		};
 	}
 
-	if ( ! chatter.message.startsWith(prefix) || chatter.username == 'shermanthebot' ) {
+	if ( ! message.startsWith(prefix) || username == 'shermanthebot' ) {
 		return;
 	}
 
-	const args = chatter.message.slice(prefix.length).split(/ +/);
+	const args = message.slice(prefix.length).split(/ +/);
 	const cmd  = args.shift().toLowerCase();
 
 	switch (cmd) {
 
 		case 'test': 
-			Bot.say(`@${chatter.username} - Sherman is sailing...`);
+			client.say(channel, `@${tags.username} - Sherman is sailing...`);
 		break;
 
 		case 'fire':
@@ -117,81 +121,81 @@ Bot.on('message', chatter => {
 				let damage = random(0,400);
 				megHealth = megHealth - damage;
 
-				Players[ chatter.username ]['doubloons'] += damage;
-				Bot.say(`@${chatter.username} shot at the Meg and did ${damage} damage.`);
+				Players[ tags.username ]['doubloons'] += damage;
+				client.say(channel, `@${tags.username} shot at the Meg and did ${damage} damage.`);
 
 				if ( megHealth < 0 ) {
-					Bot.say('The Meg has been slain! Collect your rewards!');
+					client.say(channel, 'The Meg has been slain! Collect your rewards!');
 					megHealth = 1000;
 					activeMeg = false;
 
-					Players[ chatter.username ]['doubloons'] += 500;
-					Players[ chatter.username ]['kills'] += 1;
-					Players[ chatter.username ]['megs'] += 1;
+					Players[ tags.username ]['doubloons'] += 500;
+					Players[ tags.username ]['kills'] += 1;
+					Players[ tags.username ]['megs'] += 1;
 				}
 			} else if ( activeKraken ) {
 				let damage = random(0,400);
 				krakenHealth = krakenHealth - damage;
 
-				Players[ chatter.username ]['doubloons'] += damage;
-				Bot.say(`@${chatter.username} shot at a tentacle and did ${damage} damage.`);
+				Players[ tags.username ]['doubloons'] += damage;
+				client.say(channel, `@${tags.username} shot at a tentacle and did ${damage} damage.`);
 
 				if ( krakenHealth < 0 ) {
-					Bot.say('The Kraken has been slain and sinks beneath the waves! Collect your rewards!');
+					client.say(channel, 'The Kraken has been slain and sinks beneath the waves! Collect your rewards!');
 					krakenHealth = 1000;
 					activeKraken = false;
 
-					Players[ chatter.username ]['doubloons'] += 5000;
-					Players[ chatter.username ]['kills'] += 1;
-					Players[ chatter.username ]['krakens'] += 1;
+					Players[ tags.username ]['doubloons'] += 5000;
+					Players[ tags.username ]['kills'] += 1;
+					Players[ tags.username ]['krakens'] += 1;
 				}
 			}
 
 		break;
 
 		case 'megs':
-			if ( Players[ chatter.username ]['megs'] == 0 ) {
-				Bot.say(`You haven't killed any Megalodons, @${chatter.username}`);
+			if ( Players[ tags.username ]['megs'] == 0 ) {
+				client.say(channel, `You haven't killed any Megalodons, @${tags.username}`);
 			} else {
-				Bot.say(`You've murdered ${Players[ chatter.username ]['megs']} Megalodons, @${chatter.username}`);
+				client.say(channel, `You've murdered ${Players[ tags.username ]['megs']} Megalodons, @${tags.username}`);
 			}
 		break;
 
 		case 'krakens':
-			if ( Players[ chatter.username ]['krakens'] == 0 ) {
-				Bot.say(`You haven't killed any krakens, @${chatter.username}`);
+			if ( Players[ tags.username ]['krakens'] == 0 ) {
+				client.say(channel, `You haven't killed any krakens, @${tags.username}`);
 			} else {
-				Bot.say(`You've slain ${Players[ chatter.username ]['krakens']} krakii (is this a word?)', @${chatter.username}`);
+				client.say(channel, `You've slain ${Players[ tags.username ]['krakens']} krakii (is this a word?)', @${tags.username}`);
 			}
 		break;
 
 		case 'repairs':
-			if ( Players[ chatter.username ]['repairs'] == 0 ) {
-				Bot.say(`You've never fixed the ship, @${chatter.username}. It's almost like you WANT us to sink. :(`);
+			if ( Players[ tags.username ]['repairs'] == 0 ) {
+				client.say(channel, `You've never fixed the ship, @${tags.username}. It's almost like you WANT us to sink. :(`);
 			} else {
-				Bot.say(`You've repaired our ship ${Players[ chatter.username ]['repairs']} times. You're a true seaman!', @${chatter.username}`);
+				client.say(channel, `You've repaired our ship ${Players[ tags.username ]['repairs']} times. You're a true seaman!', @${tags.username}`);
 			}
 		break;
 
 		case 'bails':
-			if ( Players[ chatter.username ]['bails'] == 0 ) {
-				Bot.say(`You've never bailed water, @${chatter.username}. Do you think you're too important? :(`);
+			if ( Players[ tags.username ]['bails'] == 0 ) {
+				client.say(channel, `You've never bailed water, @${tags.username}. Do you think you're too important? :(`);
 			} else {
-				Bot.say(`You've bailed ${Players[ chatter.username ]['bails']} gallons! Water belongs outside the ship!', @${chatter.username}`);
+				client.say(channel, `You've bailed ${Players[ tags.username ]['bails']} gallons! Water belongs outside the ship!', @${tags.username}`);
 			}
 		break;
 
 		case 'bail':
 			if ( shipWater == 0 ) {
-				Bot.say(`${chatter.username} flails his bucket around at the air. What a doofus!`);
+				client.say(channel, `${tags.username} flails his bucket around at the air. What a doofus!`);
 				return;
 			}
 			if ( shipWater > 0 ) {
-				Players[ chatter.username ]['doubloons'] += 25;
+				Players[ tags.username ]['doubloons'] += 25;
 				shipWater = shipWater - 1;
-				Bot.say(`${chatter.username} vigorously bails water...`);
+				client.say(channel, `${tags.username} vigorously bails water...`);
 
-				Players[ chatter.username ]['bails'] += 1;
+				Players[ tags.username ]['bails'] += 1;
 
 				return;
 			}
@@ -199,13 +203,13 @@ Bot.on('message', chatter => {
 
 		case 'repair':
 			if ( shipHoles == 0 ) {
-				Bot.say(`${chatter.username} should not be allowed to play with wood...`)
+				client.say(channel, `${tags.username} should not be allowed to play with wood...`)
 			}
 			if ( shipHoles > 0 ) {
-				Players[ chatter.username ]['repairs'] += 1;
-				Players[ chatter.username ]['doubloons'] += 50;
+				Players[ tags.username ]['repairs'] += 1;
+				Players[ tags.username ]['doubloons'] += 50;
 				shipHoles = shipHoles - 1;
-				Bot.say('The sound of hammering below decks is reassuring.');
+				client.say(channel, 'The sound of hammering below decks is reassuring.');
 				return;
 			}
 		
@@ -215,7 +219,7 @@ Bot.on('message', chatter => {
 
 			let treasure_query = 'SELECT sum(treasure) as banked FROM bank WHERE nick = ?';
 			connection.query(
-				treasure_query, [ chatter.username ],
+				treasure_query, [ tags.username ],
 				function(err, results, fields) {
 					if ( err ) {
 						console.log(`ERROR: ${err}`);
@@ -229,11 +233,11 @@ Bot.on('message', chatter => {
 						if ( ! banked ) {
 							banked = 0;
 						}
-						var current = Players[ chatter.username ].doubloons;
+						var current = Players[ tags.username ].doubloons;
 
-						Bot.say(`${chatter.username}, you have earned ${Players[chatter.username]['doubloons']} doubloons on this trip and have ${banked} in the bank! Make sure the ship makes it to an outpost!`);
+						client.say(channel, `${tags.username}, you have earned ${Players[tags.username]['doubloons']} doubloons on this trip and have ${banked} in the bank! Make sure the ship makes it to an outpost!`);
 					} else {
-						Bot.say(`${chatter.username}, you have earned ${Players[chatter.username]['doubloons']} doubloons and 0 in the bank! Make sure the ship makes it to an outpost!`);
+						client.say(channel, `${tags.username}, you have earned ${Players[tags.username]['doubloons']} doubloons and 0 in the bank! Make sure the ship makes it to an outpost!`);
 					}
 				}
 			);
@@ -243,12 +247,12 @@ Bot.on('message', chatter => {
 		break;
 
 		case 'milk':
-			Bot.say('Milk does the body good... :)');
+			client.say(channel, 'Milk does the body good... :)');
 		break;
 
 		case 'port':
-			if ( chatter.username == 'tehblister' || chatter.username == 'megmegalodon' ) {
-				Bot.say('You made it to port! Offloading everyone\'s treasure...');
+			if ( tags.username == 'tehblister' || tags.username == 'megmegalodon' ) {
+				client.say(channel, 'You made it to port! Offloading everyone\'s treasure...');
 
 				let query = 'INSERT INTO bank (nick, treasure) VALUES (?, ?)';
 				for ( var nick in Players ) {
@@ -270,15 +274,15 @@ Bot.on('message', chatter => {
 
 		case 'meg':
 
-			if ( chatter.username == 'tehblister' || chatter.username == 'megmegalodon' ) {
+			if ( tags.username == 'tehblister' || tags.username == 'megmegalodon' ) {
 				activeMeg = true;
 				megHealth = random(500, 2500);
-				Bot.say('A wild Meg appears! Kill it with cannons! !fire away');
+				client.say(channel, 'A wild Meg appears! Kill it with cannons! !fire away');
 
 				setTimeout(function() { 
 
 					if ( activeMeg ) {
-						Bot.say('You did not kill the Meg in time and she ran away. You gain NOTHING!');
+						client.say(channel, 'You did not kill the Meg in time and she ran away. You gain NOTHING!');
 						activeMeg = false;
 					}
 
@@ -291,10 +295,10 @@ Bot.on('message', chatter => {
 
 		case 'kraken':
 
-			if ( chatter.username == 'tehblister' || chatter.username == 'megmegalodon'  ) {
+			if ( tags.username == 'tehblister' || tags.username == 'megmegalodon'  ) {
 				activeKraken = true;
 				krakenHealth = random(1500, 2500);
-				Bot.say('A kraken rises from the depths... open !fire');
+				client.say(channel, 'A kraken rises from the depths... open !fire');
 
 				setTimeout(crushKraken, 1000 * random(10, 70));
 			}
@@ -307,7 +311,7 @@ Bot.on('message', chatter => {
 
 function chargeMeg() {
 	if ( activeMeg ) {
-		Bot.say('The Meg is charging!');
+		client.say(channel, 'The Meg is charging!');
 		shipHoles = shipHoles + 1;
 	
 		console.log('Damage Check... ' + shipHoles + ':' + shipWater + ' - [/Meg:' + megHealth + ']');
@@ -319,7 +323,7 @@ function chargeMeg() {
 
 function crushKraken() {
 	if ( activeKraken ) {
-		Bot.say('The kraken is crushing your ship!');
+		client.say(channel, 'The kraken is crushing your ship!');
 		shipHoles = shipHoles + 3;
 	
 		console.log('Damage Check... ' + shipHoles + ':' + shipWater + ' - [kraken:' + krakenHealth + ']');
@@ -334,11 +338,13 @@ function checkDamage() {
 	if ( shipHoles > 0 ) {
 		shipWater = shipWater + shipHoles;
 
-		Bot.say('You are sinking! !repair and !bail');
+		client.say(channel, 'You are sinking! !repair and !bail');
+
+		console.log('Damage Check... ' + shipHoles + ':' + shipWater + ' - [kraken:' + krakenHealth + '/Meg:' + megHealth + ']');
 	}
 
 	if ( shipWater >= 15 ) {
-		Bot.say('Your ship sank! Everyone loses all their treasure. megmeg2Rip');
+		client.say(channel, 'Your ship sank! Everyone loses all their treasure. megmeg2Rip');
 		shipWater = 0;
 		shipHoles = 0;
 
@@ -347,7 +353,7 @@ function checkDamage() {
 		}
 	}
 	
-	console.log('Damage Check... ' + shipHoles + ':' + shipWater + ' - [kraken:' + krakenHealth + '/Meg:' + megHealth + ']');
+	
 
 	setTimeout(checkDamage, 10000);
 	
