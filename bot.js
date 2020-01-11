@@ -1,6 +1,8 @@
 
 require('dotenv').config();
 
+var mysql = require('mysql');
+
 const options = {
 	options: {
 		debug: true
@@ -16,6 +18,41 @@ const options = {
 };
 
 const prefix = '!';
+
+var dbConfig = {
+	host: process.env.DBHOST,
+	port: 3306,
+	user: process.env.DBUSER,
+	password: process.env.DBPASS,
+	database: 'sherman',
+	charset: 'utf8mb4'
+
+};
+
+var connection;
+
+var createConnection = function() {
+	connection = mysql.createConnection(dbConfig);
+	connection.connect(function(err) {
+		console.log('connecting to db...');
+		if ( err ) {
+			console.log('Error connecting to DB: ', err);
+			setTimeout(createConnection, 5000);
+		}
+	});
+
+	connection.on('error', function(err) {
+		console.log('DB Error': err);
+		if ( err.code == 'PROTOCOL_CONNECTION_LOST' ) {
+			createConnection();
+		} else {
+			let errorMsg = 'DB Connection Error';
+			console.log(`${errorMsg}: ${err}`);
+		}
+	});
+};
+
+createConnection();
 
 //const tmi = require('tmi.js');
 
@@ -175,17 +212,63 @@ Bot.on('message', chatter => {
 		break;
 
 		case 'treasure':
-			Bot.say(`${chatter.username}, you have earned ${Players[chatter.username]['doubloons']} doubloons! Make sure the ship makes it to an outpost!`);
+
+			let query = 'SELECT sum(treasure) as banked FROM bank WHERE nick = ?';
+			connection.query(
+				query, [ chatter.username ],
+				function(err, results, fields) {
+					if ( err ) {
+						console.log(`ERROR: ${err}`);
+						return;
+					}
+
+					var user = results[0];
+
+					if ( user ) {
+						var banked = user.banked;
+						var current = Players[ chatter.username ].doubloons;
+
+						Bot.say(`${chatter.username}, you have earned ${Players[chatter.username]['doubloons']} doubloons on this trip and have ${banked} in the bank! Make sure the ship makes it to an outpost!`);
+					} else {
+						Bot.say(`${chatter.username}, you have earned ${Players[chatter.username]['doubloons']} doubloons and 0 in the bank! Make sure the ship makes it to an outpost!`);
+					}
+				}
+			);
+
+			
 			return;
 		break;
 
 		case 'milk':
-			Bot.say('What does the milk command even do?');
+			Bot.say('Milk does the body good... :)');
+		break;
+
+		case 'port':
+			if ( chatter.username == 'tehblister' || chatter.username == 'megmegalodon' ) {
+				Bot.say('You made it to port! Offloading everyone\'s treasure...');
+
+				let query = 'INSERT INTO bank (nick, treasure) VALUES (?, ?)';
+				for ( var nick in Players ) {
+					connection.query(
+						query, [ nick, Players[ nick ].doubloons ],
+						function(err, results, fields ) {
+							if ( err ) {
+								console.log(`ERROR: ${err}`);
+								return;
+							}
+						}
+					);
+
+					Players[ nick ].doubloons = 0;
+				}
+
+				let query = ``
+			}
 		break;
 
 		case 'meg':
 
-			if ( chatter.username == 'tehblister' ) {
+			if ( chatter.username == 'tehblister' || chatter.username == 'megmegalodon' ) {
 				activeMeg = true;
 				megHealth = random(500, 2500);
 				Bot.say('A wild Meg appears! Kill it with cannons! !fire away');
@@ -206,7 +289,7 @@ Bot.on('message', chatter => {
 
 		case 'kraken':
 
-			if ( chatter.username == 'tehblister' ) {
+			if ( chatter.username == 'tehblister' || chatter.username == 'megmegalodon'  ) {
 				activeKraken = true;
 				krakenHealth = random(1500, 2500);
 				Bot.say('A kraken rises from the depths... open !fire');
