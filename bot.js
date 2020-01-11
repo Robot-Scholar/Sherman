@@ -226,6 +226,9 @@ Bot.on('message', chatter => {
 
 					if ( user ) {
 						var banked = user.banked;
+						if ( ! banked ) {
+							banked = 0;
+						}
 						var current = Players[ chatter.username ].doubloons;
 
 						Bot.say(`${chatter.username}, you have earned ${Players[chatter.username]['doubloons']} doubloons on this trip and have ${banked} in the bank! Make sure the ship makes it to an outpost!`);
