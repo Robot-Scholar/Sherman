@@ -219,6 +219,41 @@ client.on('message', (channel,tags,message,self) => {
 		
 		break;
 
+		case 'rank':
+			let rank_query = `
+			select @rownum:=@rownum+1 as rank,
+				total,
+				nick
+			from 
+				(select sum(treasure) as total,
+						nick
+				from bank
+				group by nick
+				order by total desc)T,(select @rownum:=0)a   		
+			`;
+
+			connection.query(
+				rank_query, [],
+				function(err, results, fields) {
+					if ( err ) {
+						console.log(`ERROR: ${err}`);
+						return;
+					}
+
+					for ( var i in results ) {
+						if ( results[i].nick == tags.username ) {
+							client.say(channel, `${tags.username}, you are currently rank ${results[i].rank} with ${results[i].total} in the bank!`);
+							return;
+						}
+					}
+				}
+			);
+		
+		break;
+
+
+		case 'booty':
+		case 'points':
 		case 'treasure':
 
 			let treasure_query = 'SELECT sum(treasure) as banked FROM bank WHERE nick = ?';
