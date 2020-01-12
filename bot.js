@@ -350,7 +350,7 @@ client.on('message', (channel,tags,message,self) => {
 
 function chargeMeg() {
 	if ( activeMeg ) {
-		client.say(channel, 'The Meg is charging!');
+		client.say('megmegalodon', 'The Meg is charging!');
 		shipHoles = shipHoles + 1;
 	
 		console.log('Damage Check... ' + shipHoles + ':' + shipWater + ' - [/Meg:' + megHealth + ']');
@@ -362,7 +362,7 @@ function chargeMeg() {
 
 function crushKraken() {
 	if ( activeKraken ) {
-		client.say(channel, 'The kraken is crushing your ship!');
+		client.say('#megmegalodon', 'The kraken is crushing your ship!');
 		shipHoles = shipHoles + 3;
 	
 		console.log('Damage Check... ' + shipHoles + ':' + shipWater + ' - [kraken:' + krakenHealth + ']');
@@ -377,13 +377,13 @@ function checkDamage() {
 	if ( shipHoles > 0 ) {
 		shipWater = shipWater + shipHoles;
 
-		client.say(channel, 'You are sinking! !repair and !bail');
+		client.say('#megmegalodon', 'You are sinking! !repair and !bail');
 
 		console.log('Damage Check... ' + shipHoles + ':' + shipWater + ' - [kraken:' + krakenHealth + '/Meg:' + megHealth + ']');
 	}
 
 	if ( shipWater >= 15 ) {
-		client.say(channel, 'Your ship sank! Everyone loses all their treasure. megmeg2Rip');
+		client.say('#megmegalodon', 'Your ship sank! Everyone loses all their treasure. megmeg2Rip');
 		shipWater = 0;
 		shipHoles = 0;
 
