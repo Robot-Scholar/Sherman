@@ -161,7 +161,7 @@ client.on('message', (channel,tags,message,self) => {
 								current_points   = results[i].points;
 
 								//client.whisper(tags.username, current_question);
-								client.say(channel, `[${results[i].category}] ${current_question}` );
+								client.say('#megmegalodon', `[${results[i].category}] ${current_question}` );
 
 								return;
 							}
