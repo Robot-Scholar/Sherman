@@ -147,7 +147,6 @@ client.on('message', (channel,tags,message,self) => {
 
 		case 'q': 
 			if ( activeTrivia && tags.username == 'tehblister' || tags.username == 'megmegalodon' ) {
-				activeTrivia = ! activeTrivia;
 
 				let q_query = `
 					SELECT id,question,answer,category,points FROM questions ORDER BY RAND() LIMIT 1	
