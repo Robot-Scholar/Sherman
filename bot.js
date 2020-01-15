@@ -96,10 +96,6 @@ client.on('message', (channel,tags,message,self) => {
 		return;
 	}
 
-	console.log('active? ' + activeTrivia);
-	console.log(current_answer);
-	console.log(`"${message}"`);
-
 	if ( tags.username in Players ) {
 		Players[ tags.username ]['doubloons']++;
 	} else {
@@ -114,8 +110,6 @@ client.on('message', (channel,tags,message,self) => {
 	}
 
 	if ( activeTrivia && current_question ) {
-		console.log('Answer check?');
-		console.log(current_answer);
 		if ( message.toLowerCase() == current_answer ) {
 			client.say(channel, `@${tags.username} got it right! You've earned ${current_points} points!`);
 			current_question = null;
