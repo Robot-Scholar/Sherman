@@ -117,12 +117,12 @@ client.on('message', (channel,tags,message,self) => {
 		console.log('Answer check?');
 		console.log(current_answer);
 		if ( message.toLowerCase() == current_answer ) {
-			client.say(`@${tags.username} got it right! You've earned ${current_points} points!`);
+			client.say(channel, `@${tags.username} got it right! You've earned ${current_points} points!`);
 			current_question = null;
 			current_answer   = null;
 			current_points   = null;
 		} else if ( current_answer.includes('|') && current_answer.includes(message.toLowerCase()) ) {
-			client.say(`@${tags.username} got it right! You've earned ${current_points} points!`);
+			client.say(channel, `@${tags.username} got it right! You've earned ${current_points} points!`);
 			current_question = null;
 			current_answer   = null;
 			current_points   = null;
