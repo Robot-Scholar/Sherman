@@ -110,6 +110,8 @@ client.on('message', (channel,tags,message,self) => {
 	}
 
 	if ( activeTrivia && current_question ) {
+		console.log('Answer check?');
+		console.log(current_answer);
 		if ( message.toLowerCase() == current_answer ) {
 			client.say(`@${tags.username} got it right! You've earned ${current_points} points!`);
 			current_question = null;
