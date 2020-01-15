@@ -82,6 +82,7 @@ let shipHoles = 0;
 let shipWater = 0;
 
 let Players = {};
+let Points  = [];
 
 // trivia vars
 let current_question = null;
@@ -99,24 +100,30 @@ client.on('message', (channel,tags,message,self) => {
 	if ( tags.username in Players ) {
 		Players[ tags.username ]['doubloons']++;
 	} else {
+		Points[ tags.username ] = 0;
 		Players[ tags.username ] = {
 			doubloons: 1,
 			megs: 0,
 			kraken: 0,
 			kills: 0,
 			repairs: 0,
-			bails: 0
+			bails: 0,
+			answers: 0
 		};
 	}
 
 	if ( activeTrivia && current_question ) {
 		if ( message.toLowerCase() == current_answer ) {
 			client.say(channel, `@${tags.username} got it right! You've earned ${current_points} points!`);
+			Players[ tags.username ].answers += 1;
+			Points[ tags.username ] += current_points;
 			current_question = null;
 			current_answer   = null;
 			current_points   = null;
 		} else if ( current_answer.includes('|') && current_answer.includes(message.toLowerCase()) ) {
 			client.say(channel, `@${tags.username} got it right! You've earned ${current_points} points!`);
+			Players[ tags.username ].answers += 1;
+			Points[ tags.username ] += current_points;
 			current_question = null;
 			current_answer   = null;
 			current_points   = null;
@@ -137,6 +144,10 @@ client.on('message', (channel,tags,message,self) => {
 				activeTrivia = ! activeTrivia;
 				client.say(channel, activeTrivia ? 'Trivia is ON' : 'Trivia is OFF');
 			}
+		break;
+
+		case 'score':
+			client.say(channel, `@${tags.username}, you have ${Points[tags.username]} points.`);
 		break;
 
 		case 'q': 
