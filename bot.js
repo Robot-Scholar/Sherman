@@ -72,6 +72,8 @@ let activeKraken = false;
 let megHealth = 1000;
 let krakenHealth = 5000;
 
+let activeTrivia = false;
+
 function random(low, high) {
 	return Math.floor(Math.random() * (high - low) + low);
 }
@@ -80,6 +82,11 @@ let shipHoles = 0;
 let shipWater = 0;
 
 let Players = {};
+
+// trivia vars
+let current_question = null;
+let current_answer   = null;
+let current_points   = null;
 
 client.on('message', (channel,tags,message,self) => {
 
@@ -102,6 +109,20 @@ client.on('message', (channel,tags,message,self) => {
 		};
 	}
 
+	if ( activeTrivia && current_question ) {
+		if ( message.toLowerCase() == current_answer ) {
+			client.say(`@${tags.username} got it right! You've earned ${current_points} points!`);
+			current_question = null;
+			current_answer   = null;
+			current_points   = null;
+		} else if ( current_answer.includes('|') && current_answer.includes(message.toLowerCase()) ) {
+			client.say(`@${tags.username} got it right! You've earned ${current_points} points!`);
+			current_question = null;
+			current_answer   = null;
+			current_points   = null;
+		}
+	}
+
 	const args = message.slice(prefix.length).split(/ +/);
 	const cmd  = args.shift().toLowerCase();
 
@@ -109,6 +130,44 @@ client.on('message', (channel,tags,message,self) => {
 
 		case 'test': 
 			client.say(channel, `@${tags.username} - Sherman is sailing...`);
+		break;
+
+		case 'trivia':
+			if ( tags.username == 'tehblister' || tags.username == 'megmegalodon' ) {
+				activeTrivia = ! activeTrivia;
+				client.whisper(tags.username, activeTrivia ? 'Trivia is ON' : 'Trivia is OFF');
+			}
+		break;
+
+		case 'q': 
+			if ( activeTrivia && tags.username == 'tehblister' || tags.username == 'megmegalodon' ) {
+				activeTrivia = ! activeTrivia;
+
+				let q_query = `
+					SELECT id,question,answer,points FROM questions ORDER BY RAND() LIMIT 1	
+				`;
+
+					connection.query(
+						q_query, [],
+						function(err, results, fields) {
+							if ( err ) {
+								console.log(`ERROR: ${err}`);
+								return;
+							}
+
+							for ( var i in results ) {
+								current_question = results.question;
+								current_answer   = results.answer;
+								current_points   = results.points;
+
+								client.whisper(tags.username, current_question);
+								client.say(channel, `[${results.category}] ${current_question}` );
+
+								return;
+							}
+						}
+					);
+			}
 		break;
 
 		case 'say':
