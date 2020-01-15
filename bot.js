@@ -96,6 +96,9 @@ client.on('message', (channel,tags,message,self) => {
 		return;
 	}
 
+	console.log('active? ' + activeTrivia);
+	console.log(current_answer);
+
 	if ( tags.username in Players ) {
 		Players[ tags.username ]['doubloons']++;
 	} else {
