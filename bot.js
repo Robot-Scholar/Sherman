@@ -135,7 +135,7 @@ client.on('message', (channel,tags,message,self) => {
 		case 'trivia':
 			if ( tags.username == 'tehblister' || tags.username == 'megmegalodon' ) {
 				activeTrivia = ! activeTrivia;
-				client.whisper(tags.username, activeTrivia ? 'Trivia is ON' : 'Trivia is OFF');
+				client.say(channel, activeTrivia ? 'Trivia is ON' : 'Trivia is OFF');
 			}
 		break;
 
@@ -144,7 +144,7 @@ client.on('message', (channel,tags,message,self) => {
 				activeTrivia = ! activeTrivia;
 
 				let q_query = `
-					SELECT id,question,answer,points FROM questions ORDER BY RAND() LIMIT 1	
+					SELECT id,question,answer,category,points FROM questions ORDER BY RAND() LIMIT 1	
 				`;
 
 					connection.query(
@@ -156,12 +156,12 @@ client.on('message', (channel,tags,message,self) => {
 							}
 
 							for ( var i in results ) {
-								current_question = results.question;
-								current_answer   = results.answer;
-								current_points   = results.points;
+								current_question = results[i].question;
+								current_answer   = results[i].answer;
+								current_points   = results[i].points;
 
-								client.whisper(tags.username, current_question);
-								client.say(channel, `[${results.category}] ${current_question}` );
+								//client.whisper(tags.username, current_question);
+								client.say(channel, `[${results[i].category}] ${current_question}` );
 
 								return;
 							}
